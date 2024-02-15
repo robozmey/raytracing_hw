@@ -18,6 +18,8 @@ u_int8_t b2f(float c) {
     return round(c * 255);
 }
 
+class Rotation;
+
 class Position {
 public:
     float x, y, z;
@@ -29,28 +31,28 @@ public:
         z = z0;
     }
 
-    float cross(Position other) {
+    float cross(Position other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    Position operator+(Position other) {
+    Position operator+(Position other) const {
         return {x + other.x, y + other.y,  z + other.z};
     }
-    Position operator-(Position other) {
+    Position operator-(Position other) const {
         return {x - other.x, y - other.y,  z - other.z};
     }
-    Position operator*(Position other) {
+    Position operator*(Position other) const {
         return {x * other.x, y * other.y,  z * other.z};
     }
-    Position operator/(Position other) {
+    Position operator/(Position other) const {
         return {x / other.x, y / other.y,  z / other.z};
     }
 
-    Position operator*(float c) {
+    Position operator*(float c) const {
         return {x * c, y * c, z * c};
     }
 
-    Position normalize() {
+    Position normalize() const {
         float norm = sqrt(x * x + y * y + z * z);
         return {x / norm, y / norm, z / norm};
     }
@@ -59,11 +61,32 @@ public:
 class Rotation {
 public:
     float x, y, z, w;
+
+    Rotation(float x0, float y0, float z0, float w0) : x(x0), y(y0), z(z0), w(w0) {}
+
     void set(float x0, float y0, float z0, float w0) {
         x = x0;
         y = y0;
         z = z0;
         w = w0;
+    }
+    Rotation operator*(Rotation other) const {
+        Position v1 = Position(x, y, z);
+        Position v2 = Position(other.x, other.y, other.z);
+        Position v = v2 * w + v1 * other.w + v1 * v2;
+        return {v.x, v.y, v.z, w * other.w - v1.cross(v2)};
+    }
+
+    Rotation inv() const {
+        return {-x, -y, -z, w};
+    }
+
+    Position rotate(Position position) const {
+        Rotation vw = {position.x, position.y, position.z, 0};
+
+        Rotation res = (Rotation(x, y, z, w) * vw) * Rotation(-x, -y, -z, w);
+
+        return {res.x, res.y, res.z};
     }
 };
 
@@ -76,7 +99,7 @@ public:
 
 class Primitive {
     Position position = {0, 0, 0};
-    Rotation rotation = {0, 0, 0, 0};
+    Rotation rotation = {0, 0, 0, 1};
     Color color = {0, 0, 0};
 
 public:
@@ -105,6 +128,8 @@ public:
 
     Ray move(Ray ray) const {
         ray.origin = ray.origin - position;
+//        ray.origin = rotation.inv().rotate(ray.origin);
+        ray.direction = rotation.inv().rotate(ray.direction);
         return ray;
     }
 
@@ -132,7 +157,17 @@ public:
     Box() = default;
     Box(Position size0) : size(size0) {}
     float intersection(Ray ray) const override  {
-        return -1;
+        auto t1 = (size - ray.origin) / (ray.direction);
+        auto t2 = (size * (-1) - ray.origin) / (ray.direction);
+        if (t1.x > t2.x) std::swap(t1.x, t2.x);
+        if (t1.y > t2.y) std::swap(t1.y, t2.y);
+        if (t1.z > t2.z) std::swap(t1.z, t2.z);
+        float t1_ = std::max(t1.x, std::max(t1.y, t1.z));
+        float t2_ = std::min(t2.x, std::min(t2.y, t2.z));
+
+        if (t1_ > t2_) return -1;
+        if (t1_ > 0) return t1_;
+        return t2_;
     }
 };
 
@@ -359,7 +394,7 @@ public:
         std::vector<u_int8_t> output;
         for (int py = camera.height-1; py >= 0; py--) {
             for (int px = 0; px < camera.width; px++) {
-                Ray ray = camera.generate_ray(px, py);
+                Ray ray = camera.generate_ray(px + 0.5, py + 0.5);
 
                 Color pixel_color = raytrace(ray);
 
