@@ -368,7 +368,8 @@ public:
                     break;
                 }
                 default: {
-                    exit(-1);
+                    std::cerr << "Found unknown command: " << command_str << std::endl;
+                    break;
                 }
             }
         }
