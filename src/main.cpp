@@ -6,15 +6,15 @@
 
 class Color {
 public:
-    float r, g, b;
-    void set(float r0, float g0, float b0) {
+    double r, g, b;
+    void set(double r0, double g0, double b0) {
         r = r0;
         g = g0;
         b = b0;
     }
 };
 
-u_int8_t b2f(float c) {
+u_int8_t b2f(double c) {
     return round(c * 255);
 }
 
@@ -22,16 +22,16 @@ class Rotation;
 
 class Position {
 public:
-    float x, y, z;
-    Position() {}
-    Position(float x0, float y0, float z0) : x(x0), y(y0), z(z0) {}
-    void set(float x0, float y0, float z0) {
+    double x, y, z;
+    Position() = default;
+    Position(double x0, double y0, double z0) : x(x0), y(y0), z(z0) {}
+    void set(double x0, double y0, double z0) {
         x = x0;
         y = y0;
         z = z0;
     }
 
-    float cross(Position other) const {
+    double cross(Position other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
@@ -48,23 +48,23 @@ public:
         return {x / other.x, y / other.y,  z / other.z};
     }
 
-    Position operator*(float c) const {
+    Position operator*(double c) const {
         return {x * c, y * c, z * c};
     }
 
     Position normalize() const {
-        float norm = sqrt(x * x + y * y + z * z);
+        double norm = sqrt(x * x + y * y + z * z);
         return {x / norm, y / norm, z / norm};
     }
 };
 
 class Rotation {
 public:
-    float x, y, z, w;
+    double x, y, z, w;
 
-    Rotation(float x0, float y0, float z0, float w0) : x(x0), y(y0), z(z0), w(w0) {}
+    Rotation(double x0, double y0, double z0, double w0) : x(x0), y(y0), z(z0), w(w0) {}
 
-    void set(float x0, float y0, float z0, float w0) {
+    void set(double x0, double y0, double z0, double w0) {
         x = x0;
         y = y0;
         z = z0;
@@ -92,9 +92,9 @@ public:
 
 class Ray {
 public:
-    Position origin;
-    Position direction;
-    Ray() {}
+    Position origin = {0, 0, 0};
+    Position direction = {0, 0, 1};
+    Ray() = default;
 };
 
 class Primitive {
@@ -103,7 +103,7 @@ class Primitive {
     Color color = {0, 0, 0};
 
 public:
-    Primitive() {}
+    Primitive() = default;
 
     Position get_position() const {
         return position;
@@ -133,19 +133,19 @@ public:
         return ray;
     }
 
-    virtual float intersection(Ray ray) const {
+    virtual double intersection(Ray ray) const {
         return -1;
     }
 };
 
 class Plane : public Primitive {
 public:
-    Position normal;
+    Position normal = {0, 1, 0};
     Plane() = default;
-    Plane(Position normal0) : normal(normal0) {}
-    float intersection(Ray ray) const override {
-        float on = ray.origin.cross(normal);
-        float dn = ray.direction.cross(normal);
+    explicit Plane(Position normal0) : normal(normal0) {}
+    double intersection(Ray ray) const override {
+        double on = ray.origin.cross(normal);
+        double dn = ray.direction.cross(normal);
         if (dn == 0) return -1;
         return - on / dn;
     }
@@ -153,17 +153,17 @@ public:
 
 class Box : public Primitive {
 public:
-    Position size;
+    Position size = {1, 1, 1};
     Box() = default;
-    Box(Position size0) : size(size0) {}
-    float intersection(Ray ray) const override  {
+    explicit Box(Position size0) : size(size0) {}
+    double intersection(Ray ray) const override  {
         auto t1 = (size - ray.origin) / (ray.direction);
         auto t2 = (size * (-1) - ray.origin) / (ray.direction);
         if (t1.x > t2.x) std::swap(t1.x, t2.x);
         if (t1.y > t2.y) std::swap(t1.y, t2.y);
         if (t1.z > t2.z) std::swap(t1.z, t2.z);
-        float t1_ = std::max(t1.x, std::max(t1.y, t1.z));
-        float t2_ = std::min(t2.x, std::min(t2.y, t2.z));
+        double t1_ = std::max(t1.x, std::max(t1.y, t1.z));
+        double t2_ = std::min(t2.x, std::min(t2.y, t2.z));
 
         if (t1_ > t2_) return -1;
         if (t1_ > 0) return t1_;
@@ -173,17 +173,17 @@ public:
 
 class Ellipsoid : public Primitive {
 public:
-    Position size;
+    Position size = {1, 1, 1};
     Ellipsoid() = default;
-    Ellipsoid(Position size0) : size(size0) {}
-    float intersection(Ray ray) const override  {
-        float a = (ray.direction / size).cross(ray.direction / size);
-        float b = (ray.origin    / size).cross(ray.direction / size) * 2;
-        float c = (ray.origin    / size).cross(ray.origin    / size) -1;
-        float d = b*b - 4*a*c;
+    explicit Ellipsoid(Position size0) : size(size0) {}
+    double intersection(Ray ray) const override  {
+        double a = (ray.direction / size).cross(ray.direction / size);
+        double b = (ray.origin    / size).cross(ray.direction / size) * 2;
+        double c = (ray.origin    / size).cross(ray.origin    / size) -1;
+        double d = b*b - 4*a*c;
         if (d < 0) return -1;
-        float t1 = (-b + sqrt(d)) / (2 * a);
-        float t2 = (-b - sqrt(d)) / (2 * a);
+        double t1 = (-b + sqrt(d)) / (2 * a);
+        double t2 = (-b - sqrt(d)) / (2 * a);
         if (t1 < t2 && t1 > 0)
             return t1;
         else
@@ -196,23 +196,23 @@ struct Camera {
     Position right;
     Position up;
     Position forward;
-    float fov_x;
-    float fov_y;
-    int width;
-    int height;
+    double fov_x;
+    double fov_y;
+    int width = 100;
+    int height = 100;
 
-    void set_fov(float fov_x0) {
+    void set_fov(double fov_x0) {
         fov_x = fov_x0;
         fov_y = atan(tan(fov_x / 2) * height / width) * 2;
     }
 
-    Ray generate_ray(int x, int y) {
+    Ray generate_ray(int x, int y) const {
         Ray ray;
         ray.origin = position;
 
-        float px = (2.f * x / width - 1)  * tan(fov_x / 2);
-        float py = (2.f * y / height - 1) * tan(fov_y / 2);
-        float pz = 1;
+        double px = (2.0 * x / width - 1)  * tan(fov_x / 2);
+        double py = (2.0 * y / height - 1) * tan(fov_y / 2);
+        double pz = 1;
 
         ray.direction = (right * px + up * py + forward * pz).normalize();
 
@@ -237,19 +237,19 @@ struct Camera {
 
 
 class Scene {
-    Color bg_color;
+    Color bg_color = {0, 0, 0.1};
     std::vector<Primitive*> primitives;
     Camera camera;
 
 public:
 
-    Scene() {}
+    Scene() = default;
 
     Primitive*& last_primitive() {
         return primitives.back();
     }
 
-    int get_command(std::string command) {
+    int get_command(const std::string& command) {
         if (command == "DIMENSIONS") return COMMAND_DIMENSIONS;
         if (command == "BG_COLOR") return COMMAND_BG_COLOR;
         if (command == "CAMERA_POSITION") return COMMAND_CAMERA_POSITION;
@@ -290,13 +290,13 @@ public:
                     break;
                 }
                 case COMMAND_BG_COLOR: {
-                    float r, g, b;
+                    double r, g, b;
                     ss >> r >> g >> b;
                     bg_color.set(r, g, b);
                     break;
                 }
                 case COMMAND_CAMERA_FOV_X: {
-                    float fov_x;
+                    double fov_x;
                     ss >> fov_x;
                     camera.set_fov(fov_x);
                 }
@@ -304,7 +304,7 @@ public:
                 case COMMAND_CAMERA_RIGHT:
                 case COMMAND_CAMERA_UP:
                 case COMMAND_CAMERA_FORWARD: {
-                    float x, y, z;
+                    double x, y, z;
                     ss >> x >> y >> z;
 
                     switch (command) {
@@ -330,7 +330,7 @@ public:
                 case COMMAND_PLANE:
                 case COMMAND_ELLIPSOID:
                 case COMMAND_BOX: {
-                    float x, y, z;
+                    double x, y, z;
                     ss >> x >> y >> z;
 
                     switch (command) {
@@ -350,19 +350,19 @@ public:
                     break;
                 }
                 case COMMAND_POSITION: {
-                    float x, y, z;
+                    double x, y, z;
                     ss >> x >> y >> z;
                     last_primitive()->set_position({x, y, z});
                     break;
                 }
                 case COMMAND_ROTATION: {
-                    float x, y, z, w;
+                    double x, y, z, w;
                     ss >> x >> y >> z >> w;
                     last_primitive()->set_rotation({x, y, z, w});
                     break;
                 }
                 case COMMAND_COLOR: {
-                    float r, g, b;
+                    double r, g, b;
                     ss >> r >> g >> b;
                     last_primitive()->set_color({r, g, b});
                     break;
@@ -378,11 +378,11 @@ public:
 
     Color raytrace(Ray ray) {
         Color pixel_color = bg_color;
-        float pixel_t = -1;
+        double pixel_t = -1;
 
         for (const Primitive* primitive : primitives) {
             Ray new_ray = primitive->move(ray);
-            float t = primitive->intersection(new_ray);
+            double t = primitive->intersection(new_ray);
             if (t > 0 && t < pixel_t || t > 0 && pixel_t < 0) {
                 pixel_t = t;
                 pixel_color = primitive->get_color();
