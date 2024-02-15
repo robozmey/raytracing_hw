@@ -3,4 +3,4 @@ project(raytracing_hw)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(raytracing_hw main.cpp)
+add_executable(raytracing_hw src/main.cpp)
