@@ -86,7 +86,7 @@ public:
 
         Rotation res = (Rotation(x, y, z, w) * vw) * Rotation(-x, -y, -z, w);
 
-        return {res.x, res.y, res.z};
+        return position; //{res.x, res.y, res.z};
     }
 };
 
