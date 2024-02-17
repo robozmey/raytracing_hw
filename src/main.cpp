@@ -4,6 +4,9 @@
 #include <fstream>
 #include <cmath>
 
+#include "Position.h"
+#include "Rotation.h"
+
 class Color {
 public:
     double r, g, b;
@@ -17,78 +20,6 @@ public:
 u_int8_t b2f(double c) {
     return round(c * 255);
 }
-
-class Rotation;
-
-class Position {
-public:
-    double x, y, z;
-    Position() = default;
-    Position(double x0, double y0, double z0) : x(x0), y(y0), z(z0) {}
-    void set(double x0, double y0, double z0) {
-        x = x0;
-        y = y0;
-        z = z0;
-    }
-
-    double cross(Position other) const {
-        return x * other.x + y * other.y + z * other.z;
-    }
-
-    Position operator+(Position other) const {
-        return {x + other.x, y + other.y,  z + other.z};
-    }
-    Position operator-(Position other) const {
-        return {x - other.x, y - other.y,  z - other.z};
-    }
-    Position operator*(Position other) const {
-        return {x * other.x, y * other.y,  z * other.z};
-    }
-    Position operator/(Position other) const {
-        return {x / other.x, y / other.y,  z / other.z};
-    }
-
-    Position operator*(double c) const {
-        return {x * c, y * c, z * c};
-    }
-
-    Position normalize() const {
-        double norm = sqrt(x * x + y * y + z * z);
-        return {x / norm, y / norm, z / norm};
-    }
-};
-
-class Rotation {
-public:
-    double x, y, z, w;
-
-    Rotation(double x0, double y0, double z0, double w0) : x(x0), y(y0), z(z0), w(w0) {}
-
-    void set(double x0, double y0, double z0, double w0) {
-        x = x0;
-        y = y0;
-        z = z0;
-        w = w0;
-    }
-    Rotation operator*(Rotation other) const {
-        Position v1 = Position(x, y, z);
-        Position v2 = Position(other.x, other.y, other.z);
-        Position v = v2 * w + v1 * other.w + v1 * v2;
-        return {v.x, v.y, v.z, w * other.w - v1.cross(v2)};
-    }
-
-    Rotation inv() const {
-        return {-x, -y, -z, w};
-    }
-
-    Position rotate(Position position) const {
-        Rotation vw = {position.x, position.y, position.z, 0};
-
-        Rotation res = (Rotation(x, y, z, w) * vw) * Rotation(-x, -y, -z, w);
-
-        return position; //{res.x, res.y, res.z};
-    }
-};
 
 class Ray {
 public:
@@ -127,9 +58,7 @@ public:
     }
 
     Ray move(Ray ray) const {
-        ray.origin = ray.origin - position;
-//        ray.origin = rotation.inv().rotate(ray.origin);
-        ray.direction = rotation.inv().rotate(ray.direction);
+        ray.origin = (ray.origin - position).rotate(rotation);
         return ray;
     }
 
@@ -144,8 +73,8 @@ public:
     Plane() = default;
     explicit Plane(Position normal0) : normal(normal0) {}
     double intersection(Ray ray) const override {
-        double on = ray.origin.cross(normal);
-        double dn = ray.direction.cross(normal);
+        double on = ray.origin ^ normal;
+        double dn = ray.direction ^ normal;
         if (dn == 0) return -1;
         return - on / dn;
     }
@@ -177,9 +106,9 @@ public:
     Ellipsoid() = default;
     explicit Ellipsoid(Position size0) : size(size0) {}
     double intersection(Ray ray) const override  {
-        double a = (ray.direction / size).cross(ray.direction / size);
-        double b = (ray.origin    / size).cross(ray.direction / size) * 2;
-        double c = (ray.origin    / size).cross(ray.origin    / size) -1;
+        double a = (ray.direction / size) ^ (ray.direction / size);
+        double b = (ray.origin    / size) ^ (ray.direction / size) * 2;
+        double c =((ray.origin    / size) ^ (ray.origin    / size)) -1;
         double d = b*b - 4*a*c;
         if (d < 0) return -1;
         double t1 = (-b + sqrt(d)) / (2 * a);
