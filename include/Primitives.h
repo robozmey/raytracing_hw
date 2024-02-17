@@ -40,8 +40,7 @@ public:
     }
 
     Ray move(Ray ray) const {
-        ray.origin = (ray.origin - position).rotate(rotation);
-        return ray;
+        return (ray - position).rotate(rotation);
     }
 
     virtual double intersection(Ray ray) const {

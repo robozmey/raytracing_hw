@@ -27,5 +27,7 @@ public:
     Position rotate(Rotation rotation) const;
 };
 
+Position operator*(double c, const Position& other);
+
 
 #endif //RAYTRACING_HW_POSITION_H

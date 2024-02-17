@@ -39,7 +39,11 @@ Position Position::normalize() const {
 
 Position Position::rotate(Rotation rotation) const {
 
-    Rotation res = rotation * Rotation(x, y, z, 0) * rotation.inv();
+    Rotation res = rotation * Rotation({x, y, z}, 0.0) * rotation.inv();
 
-    return {res.x, res.y, res.z};
+    return res.v;
+}
+
+Position operator*(double c, const Position &other) {
+    return {other.x * c, other.y * c, other.z * c};
 }

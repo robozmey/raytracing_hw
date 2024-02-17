@@ -12,6 +12,18 @@ public:
     Position origin = {0, 0, 0};
     Position direction = {0, 0, 1};
     Ray() = default;
+
+    Ray operator+(Position d) {
+        return {origin + d, direction};
+    }
+
+    Ray operator-(Position d) {
+        return {origin - d, direction};
+    }
+
+    Ray rotate(Rotation rotation) {
+        return {origin.rotate(rotation), direction.rotate(rotation)};
+    }
 };
 
 
