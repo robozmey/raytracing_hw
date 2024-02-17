@@ -7,4 +7,8 @@ include_directories(include)
 add_executable(raytracing_hw
         src/main.cpp
         src/Position.cpp
-        src/Rotation.cpp)
+        src/Rotation.cpp
+        src/Primitives.cpp
+        src/Color.cpp
+        src/Scene.cpp
+        src/SceneRender.cpp)
