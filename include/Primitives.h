@@ -40,7 +40,7 @@ public:
     }
 
     Ray move(Ray ray) const {
-        return (ray - position).rotate(rotation);
+        return (ray - position).rotate(conjugate(rotation));
     }
 
     virtual double intersection(Ray ray) const {

@@ -113,7 +113,7 @@ void Scene::load(std::string scene_path) {
             case COMMAND_ROTATION: {
                 double x, y, z, w;
                 ss >> x >> y >> z >> w;
-                last_primitive()->set_rotation({x, y, z, w});
+                last_primitive()->set_rotation({w, x, y, z});
                 break;
             }
             case COMMAND_COLOR: {
