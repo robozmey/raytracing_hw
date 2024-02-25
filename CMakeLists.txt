@@ -4,8 +4,9 @@ project(raytracing_hw)
 set(CMAKE_CXX_STANDARD 17)
 
 set(TARGET_NAME "${PROJECT_NAME}")
-
 set(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+
+find_package(GLEW REQUIRED)
 
 include_directories(include)
 add_executable(raytracing_hw
@@ -17,7 +18,5 @@ add_executable(raytracing_hw
         src/Scene.cpp
         src/SceneRender.cpp)
 
-target_include_directories(${TARGET_NAME} PUBLIC
-        shaders
-        "${GLEW_INCLUDE_DIRS}"
-)
+add_subdirectory(glm)
+target_link_libraries(${PROJECT_NAME} glm::glm)
