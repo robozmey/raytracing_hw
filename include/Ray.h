@@ -6,6 +6,7 @@
 #define RAYTRACING_HW_RAY_H
 
 #include "Position.h"
+#include "Rotation.h"
 
 class Ray {
 public:
@@ -22,7 +23,7 @@ public:
     }
 
     Ray rotate(Rotation rotation) {
-        return {origin.rotate(rotation), direction.rotate(rotation)};
+        return {::rotate(origin, rotation), ::rotate(direction, rotation)};
     }
 };
 

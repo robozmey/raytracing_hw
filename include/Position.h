@@ -5,29 +5,8 @@
 #ifndef RAYTRACING_HW_POSITION_H
 #define RAYTRACING_HW_POSITION_H
 
+#include <glm/vec3.hpp> // glm::vec3
 
-#include "Rotation.h"
-
-class Position {
-public:
-    double x, y, z;
-    Position() = default;
-    Position(double x0, double y0, double z0) : x(x0), y(y0), z(z0) {}
-    void set(double x0, double y0, double z0);
-
-    Position operator+(Position other) const;
-    Position operator-(Position other) const;
-    Position operator*(Position other) const;
-    Position operator/(Position other) const;
-    double operator^(Position other) const;
-
-    Position operator*(double c) const;
-
-    Position normalize() const;
-    Position rotate(Rotation rotation) const;
-};
-
-Position operator*(double c, const Position& other);
-
+typedef glm::dvec3 Position;
 
 #endif //RAYTRACING_HW_POSITION_H

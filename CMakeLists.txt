@@ -3,6 +3,10 @@ project(raytracing_hw)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(TARGET_NAME "${PROJECT_NAME}")
+
+set(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+
 include_directories(include)
 add_executable(raytracing_hw
         src/main.cpp
@@ -12,3 +16,8 @@ add_executable(raytracing_hw
         src/Color.cpp
         src/Scene.cpp
         src/SceneRender.cpp)
+
+target_include_directories(${TARGET_NAME} PUBLIC
+        shaders
+        "${GLEW_INCLUDE_DIRS}"
+)

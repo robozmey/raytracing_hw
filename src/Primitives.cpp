@@ -5,15 +5,15 @@
 #include "Primitives.h"
 
 double Plane::intersection(Ray ray) const {
-    double on = ray.origin ^ normal;
-    double dn = ray.direction ^ normal;
+    double on = glm::dot(ray.origin, normal);
+    double dn = glm::dot(ray.direction, normal);
     if (dn == 0) return -1;
     return - on / dn;
 }
 
 double Box::intersection(Ray ray) const  {
     auto t1 = (size - ray.origin) / (ray.direction);
-    auto t2 = (size * (-1) - ray.origin) / (ray.direction);
+    auto t2 = (-size - ray.origin) / (ray.direction);
     if (t1.x > t2.x) std::swap(t1.x, t2.x);
     if (t1.y > t2.y) std::swap(t1.y, t2.y);
     if (t1.z > t2.z) std::swap(t1.z, t2.z);
@@ -26,9 +26,9 @@ double Box::intersection(Ray ray) const  {
 }
 
 double Ellipsoid::intersection(Ray ray) const  {
-    double a = (ray.direction / size) ^ (ray.direction / size);
-    double b = (ray.origin    / size) ^ (ray.direction / size) * 2;
-    double c =((ray.origin    / size) ^ (ray.origin    / size)) -1;
+    double a = glm::dot(ray.direction / size, ray.direction / size);
+    double b = glm::dot(ray.origin    / size, ray.direction / size) * 2;
+    double c = glm::dot(ray.origin    / size, ray.origin    / size)  -1;
     double d = b*b - 4*a*c;
     if (d < 0) return -1;
     double t1 = (-b + sqrt(d)) / (2 * a);

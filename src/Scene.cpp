@@ -64,16 +64,16 @@ void Scene::load(std::string scene_path) {
 
                 switch (command) {
                     case COMMAND_CAMERA_POSITION:
-                        camera.position.set(x, y, z);
+                        camera.position = {x, y, z};
                         break;
                     case COMMAND_CAMERA_RIGHT:
-                        camera.right.set(x, y, z);
+                        camera.right = {x, y, z};
                         break;
                     case COMMAND_CAMERA_UP:
-                        camera.up.set(x, y, z);
+                        camera.up = {x, y, z};
                         break;
                     case COMMAND_CAMERA_FORWARD:
-                        camera.forward.set(x, y, z);
+                        camera.forward = {x, y, z};
                         break;
                 }
                 break;

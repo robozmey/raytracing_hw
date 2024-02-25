@@ -37,7 +37,7 @@ struct Camera {
         double py = (2.0 * y / height - 1) * tan(fov_y / 2);
         double pz = 1;
 
-        ray.direction = (right * px + up * py + forward * pz).normalize();
+        ray.direction = glm::normalize(right * px + up * py + forward * pz);
 
         return ray;
     }
