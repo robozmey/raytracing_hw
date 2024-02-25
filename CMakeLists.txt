@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(TARGET_NAME "${PROJECT_NAME}")
 set(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
-include_directories(include glm)
+include_directories(include)
 add_executable(raytracing_hw
         src/main.cpp
         src/Position.cpp
@@ -15,3 +15,6 @@ add_executable(raytracing_hw
         src/Color.cpp
         src/Scene.cpp
         src/SceneRender.cpp)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glm)
+target_link_libraries(${TARGET_NAME} glm::glm)
