@@ -12,7 +12,7 @@
 
 class Primitive {
     Position position = {0, 0, 0};
-    Rotation rotation = {0, 0, 0, 1};
+    Rotation rotation = {1, 0, 0, 0};
     Color color = {0, 0, 0};
 
 public:

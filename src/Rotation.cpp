@@ -5,7 +5,7 @@
 #include "Rotation.h"
 
 Position rotate(Position pos, Rotation rot) {
-    Rotation res = (rot * Rotation(0, pos.x, pos.y, pos.z) * glm::conjugate(rot));
+    Rotation res = (rot * Rotation(0, pos) * glm::inverse(rot));
 
     return {res.x, res.y, res.z};
 }
