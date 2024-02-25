@@ -16,5 +16,5 @@ add_executable(raytracing_hw
         src/Scene.cpp
         src/SceneRender.cpp)
 
-add_subdirectory(${PROJECT_ROOT}/include)
+add_subdirectory(glm)
 target_link_libraries(${TARGET_NAME} glm::glm)
