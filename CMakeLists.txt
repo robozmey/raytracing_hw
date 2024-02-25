@@ -16,5 +16,5 @@ add_executable(raytracing_hw
         src/Scene.cpp
         src/SceneRender.cpp)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glm)
+add_subdirectory(${PROJECT_ROOT}/include)
 target_link_libraries(${TARGET_NAME} glm::glm)
