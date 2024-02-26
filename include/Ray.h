@@ -12,18 +12,19 @@ class Ray {
 public:
     Position origin = {0, 0, 0};
     Position direction = {0, 0, 1};
+    int depth = 5;
     Ray() = default;
 
     Ray operator+(Position d) {
-        return {origin + d, direction};
+        return {origin + d, direction, depth};
     }
 
     Ray operator-(Position d) {
-        return {origin - d, direction};
+        return {origin - d, direction, depth};
     }
 
     Ray rotate(Rotation rotation) {
-        return {::rotate(origin, rotation), ::rotate(direction, rotation)};
+        return {::rotate(origin, rotation), ::rotate(direction, rotation), depth};
     }
 };
 

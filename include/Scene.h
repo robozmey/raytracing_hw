@@ -29,8 +29,9 @@ struct Camera {
         fov_y = atan(tan(fov_x / 2) * height / width) * 2;
     }
 
-    Ray generate_ray(int x, int y) const {
+    Ray generate_ray(int x, int y, int ray_depth = 5) const {
         Ray ray;
+        ray.depth = ray_depth;
         ray.origin = position;
 
         double px = (2.0 * x / width - 1)  * tan(fov_x / 2);
@@ -73,6 +74,7 @@ class Scene {
     Color bg_color = {0, 0, 0.1};
     std::vector<Object*> primitives;
     Camera camera;
+    int ray_depth = 5;
 
 public:
 

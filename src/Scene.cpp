@@ -57,6 +57,12 @@ void Scene::load(std::string scene_path) {
                 camera.height = h;
                 break;
             }
+            case COMMAND_RAY_DEPTH: {
+                double depth;
+                ss >> depth;
+                ray_depth = depth;
+                break;
+            }
             case COMMAND_BG_COLOR: {
                 double r, g, b;
                 ss >> r >> g >> b;

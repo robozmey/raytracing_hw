@@ -34,7 +34,7 @@ std::vector<u_int8_t> Scene::render() {
     std::vector<u_int8_t> output;
     for (int py = camera.height-1; py >= 0; py--) {
         for (int px = 0; px < camera.width; px++) {
-            Ray ray = camera.generate_ray(px + 0.5, py + 0.5);
+            Ray ray = camera.generate_ray(px + 0.5, py + 0.5, ray_depth);
 
             Color pixel_color = raytrace(ray);
 
