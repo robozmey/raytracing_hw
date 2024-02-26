@@ -48,6 +48,16 @@ Color Scene::raytrace(Ray ray) {
         Position new_direction = ray.direction - 2.0 * normal * (normal * ray.direction);
         summary_light_color = raytrace({point, new_direction, ray.depth-1});
     }
+    if (nearest->material.type == DielectricType) {
+        Position normal = nearest->getNormal(ray);
+        double n1 = 1, n2 = nearest->material.ior;
+        if (false) n1 = nearest->material.ior, n2 = 1;
+        double cos1 = glm::dot(normal, ray.direction);
+        double sin2 = n1 / n2 * sqrt(1 - cos1 * cos1);
+        double cos2 = sqrt(1 - sin2 * sin2);
+        Position new_direction = n1 / n2 * (-ray.direction) + (n1 / n2 * cos1 - cos2) * normal;
+        summary_light_color = raytrace({point, new_direction, ray.depth-1});
+    }
 
     return summary_light_color * nearest->get_color();
 }
