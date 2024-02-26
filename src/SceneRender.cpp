@@ -51,15 +51,16 @@ Color Scene::raytrace(Ray ray) {
     if (nearest->material.type == DielectricType) {
         Position normal = nearest->getNormal(ray);
         double n1 = 1, n2 = nearest->material.ior;
-        if (false) n1 = nearest->material.ior, n2 = 1;
-        double cos1 = glm::dot(normal, ray.direction);
+        if (ray.is_inside_ray) n1 = nearest->material.ior, n2 = 1;
+        Position l = -ray.direction;
+        double cos1 = glm::dot(normal, l);
         double sin2 = n1 / n2 * sqrt(1 - cos1 * cos1);
         double cos2 = sqrt(1 - sin2 * sin2);
-        Position new_direction = n1 / n2 * (-ray.direction) + (n1 / n2 * cos1 - cos2) * normal;
-        summary_light_color = raytrace({point, new_direction, ray.depth-1});
+        Position new_direction = n1 / n2 * (-l) + (n1 / n2 * cos1 - cos2) * normal;
+        summary_light_color = raytrace({point, new_direction, ray.depth-1, !ray.is_inside_ray});
     }
 
-    return nearest->get_color();
+    return summary_light_color * nearest->get_color();
 }
 
 std::vector<u_int8_t> Scene::render() {
