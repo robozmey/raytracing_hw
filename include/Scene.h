@@ -13,6 +13,7 @@
 
 #include "Position.h"
 #include "Primitives.h"
+#include "Light.h"
 
 struct Camera {
     Position position;
@@ -63,18 +64,20 @@ struct Camera {
 #define COMMAND_NEW_LIGHT       16
 #define COMMAND_LIGHT_INTENSITY 17
 #define COMMAND_LIGHT_DIRECTION 18
-#define COMMAND_LIGHT_POSITION  18
-#define COMMAND_LIGHT_ATTENUATION 19
-#define COMMAND_METALLIC        20
-#define COMMAND_DIELECTRIC      21
-#define COMMAND_IOR             22
+#define COMMAND_LIGHT_POSITION  19
+#define COMMAND_LIGHT_ATTENUATION 20
+#define COMMAND_METALLIC        21
+#define COMMAND_DIELECTRIC      22
+#define COMMAND_IOR             23
 
 
 class Scene {
     Color bg_color = {0, 0, 0.1};
     std::vector<Object*> primitives;
+    std::vector<Light*> lights;
     Camera camera;
     int ray_depth = 5;
+    Color ambient_color;
 
 public:
 
@@ -82,6 +85,9 @@ public:
 
     Object*& last_primitive() {
         return primitives.back();
+    }
+    Light*& last_light() {
+        return lights.back();
     }
 
     int getCommand(const std::string& command);

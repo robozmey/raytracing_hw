@@ -58,7 +58,7 @@ void Scene::load(std::string scene_path) {
                 break;
             }
             case COMMAND_RAY_DEPTH: {
-                double depth;
+                int depth;
                 ss >> depth;
                 ray_depth = depth;
                 break;
@@ -97,6 +97,7 @@ void Scene::load(std::string scene_path) {
                 }
                 break;
             }
+// Objects
             case COMMAND_NEW_PRIMITIVE: {
                 primitives.push_back(new Object());
                 break;
@@ -152,6 +153,45 @@ void Scene::load(std::string scene_path) {
                 double ior;
                 ss >> ior;
                 last_primitive()->material.ior = ior;
+                break;
+            }
+// Light
+            case COMMAND_AMBIENT_LIGHT: {
+                double r, g, b;
+                ss >> r >> g >> b;
+                ambient_color = {r, g, b};
+                break;
+            }
+            case COMMAND_NEW_LIGHT: {
+                lights.push_back(new Light());
+                break;
+            }
+            case COMMAND_LIGHT_DIRECTION: {
+                double x, y, z;
+                ss >> x >> y >> z;
+                last_light() = new Light();
+                last_light()->direction = {x, y, z};
+                last_light()->type = DirectionalLight;
+                break;
+            }
+            case COMMAND_LIGHT_POSITION: {
+                double x, y, z;
+                ss >> x >> y >> z;
+                last_light() = new Light();
+                last_light()->position = {x, y, z};
+                last_light()->type = PositionalLight;
+                break;
+            }
+            case COMMAND_LIGHT_INTENSITY: {
+                double r, g, b;
+                ss >> r >> g >> b;
+                last_light()->intensity = {r, g, b};
+                break;
+            }
+            case COMMAND_LIGHT_ATTENUATION: {
+                double c0, c1, c2;
+                ss >> c0 >> c1 >> c2;
+                last_light()->attenuation = {c0, c1, c2};
                 break;
             }
             default: {
