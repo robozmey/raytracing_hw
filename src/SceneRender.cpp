@@ -22,6 +22,10 @@ Object* Scene::intersectObjects(Ray ray) {
     return res;
 }
 
+Position getReflection(Position normal, Position direction) {
+    return direction - 2.0 * normal * glm::dot(normal, direction);
+}
+
 Color Scene::raytrace(Ray ray) {
     if (ray.depth == 0) return bg_color;
 
@@ -45,19 +49,33 @@ Color Scene::raytrace(Ray ray) {
     }
     if (nearest->material.type == MetallicType) {
         Position normal = nearest->getNormal(ray);
-        Position new_direction = ray.direction - 2.0 * normal * (normal * ray.direction);
-        summary_light_color = raytrace({point, new_direction, ray.depth-1});
+
+        Position reflected_direction = getReflection(normal, ray.direction);
+        summary_light_color = raytrace({point, reflected_direction, ray.depth-1});
     }
     if (nearest->material.type == DielectricType) {
         Position normal = nearest->getNormal(ray);
+
         double n1 = 1, n2 = nearest->material.ior;
         if (ray.is_inside_ray) n1 = nearest->material.ior, n2 = 1;
+        Position reflected_direction = getReflection(normal, ray.direction);
+
         Position l = -ray.direction;
         double cos1 = glm::dot(normal, l);
         double sin2 = n1 / n2 * sqrt(1 - cos1 * cos1);
         double cos2 = sqrt(1 - sin2 * sin2);
-        Position new_direction = n1 / n2 * (-l) + (n1 / n2 * cos1 - cos2) * normal;
-        summary_light_color = raytrace({point, new_direction, ray.depth-1, !ray.is_inside_ray});
+        Position refracted_direction = n1 / n2 * (-l) + (n1 / n2 * cos1 - cos2) * normal;
+
+        Color reflected_light_color = raytrace({point, reflected_direction, ray.depth-1, ray.is_inside_ray});
+        Color refracted_light_color = raytrace({point, refracted_direction, ray.depth-1, !ray.is_inside_ray});
+
+        double r0 = pow((n1 - n2) / (n1 + n2), 2.0);
+        double r  = r0 + (1 - r0) * pow(1 - glm::dot(normal, -ray.direction), 5);
+        if (sin2 > 1) {
+            summary_light_color = reflected_light_color;
+        } else {
+            summary_light_color = (reflected_light_color * r + refracted_light_color * (1 - r)) * 1;
+        }
     }
 
     return summary_light_color * nearest->get_color();
