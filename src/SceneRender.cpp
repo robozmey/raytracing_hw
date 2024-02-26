@@ -59,7 +59,7 @@ Color Scene::raytrace(Ray ray) {
         summary_light_color = raytrace({point, new_direction, ray.depth-1});
     }
 
-    return summary_light_color * nearest->get_color();
+    return nearest->get_color();
 }
 
 std::vector<u_int8_t> Scene::render() {
