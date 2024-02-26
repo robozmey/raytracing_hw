@@ -40,6 +40,15 @@ Color Scene::raytrace(Ray ray) {
         Position normal = nearest->getNormal(ray);
         for (Light* light : lights) {
             Position direction = light->getDirection(point);
+
+            Position point2 = ray.getPoint(nearest->getDistanceT(ray));
+            Object* nearest2 = intersectObjects({point2, direction, 0});
+            double neares2_distance = -1, light_distance = -1;
+            if (nearest2 != nullptr) neares2_distance = glm::distance(nearest2->get_position(), point);
+            if (light->type == PositionalLight) light_distance = glm::distance(light->position, point);
+
+            if (light_distance < neares2_distance) continue;
+
             double d = glm::dot(normal, direction);
             if (d > 0) {
                 double c = light->getCoefficient(point);
