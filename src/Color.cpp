@@ -9,5 +9,6 @@ Color operator*(double d, Color other) {
 }
 
 u_int8_t b2f(double c) {
+    c = pow(c, 1 / 2.2);
     return fmin(round(c * 255), 255.0);
 }
