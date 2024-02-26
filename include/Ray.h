@@ -8,6 +8,11 @@
 #include "Position.h"
 #include "Rotation.h"
 
+struct Intersection {
+    Position position = {0, 0, 0};
+    Position normal = {0, 0, 0};
+};
+
 class Ray {
 public:
     Position origin = {0, 0, 0};

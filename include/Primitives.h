@@ -45,6 +45,9 @@ public:
     Ray move(Ray ray) const {
         return (ray - position).rotate(conjugate(rotation));
     }
+    Position transformDirection(Position dir) const {
+        return rotate(dir, rotation);
+    }
 
     virtual Position getNormal(Ray ray) const {
         return {0, 0, 1};
@@ -75,6 +78,7 @@ public:
     Box() = default;
     explicit Box(Position size0) : size(size0) {}
     double intersection(Ray ray) const override;
+    Position getNormal(Ray ray) const override;
 };
 
 class Ellipsoid : public Object {
@@ -83,6 +87,7 @@ public:
     Ellipsoid() = default;
     explicit Ellipsoid(Position size0) : size(size0) {}
     double intersection(Ray ray) const override;
+    Position getNormal(Ray ray) const override;
 };
 
 

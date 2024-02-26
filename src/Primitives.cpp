@@ -42,5 +42,35 @@ double Ellipsoid::intersection(Ray ray) const  {
 // Normals
 
 Position Plane::getNormal(Ray ray) const {
-    return normal;
+    return transformDirection(normal);
+}
+
+Position Box::getNormal(Ray ray) const {
+    auto t1 = (size - ray.origin) / (ray.direction);
+    auto t2 = (-size - ray.origin) / (ray.direction);
+    if (t1.x > t2.x) std::swap(t1.x, t2.x);
+    if (t1.y > t2.y) std::swap(t1.y, t2.y);
+    if (t1.z > t2.z) std::swap(t1.z, t2.z);
+    double t1_ = std::max(t1.x, std::max(t1.y, t1.z));
+    double t2_ = std::min(t2.x, std::min(t2.y, t2.z));
+
+    double ans = 0;
+    if (t1_ > t2_) ans = -1;
+    if (t1_ > 0) ans = t1_;
+    ans = t2_;
+
+    if (ans == t1.x) return transformDirection({-1,  0,  0});
+    if (ans == t2.x) return transformDirection({ 1,  0,  0});
+    if (ans == t1.y) return transformDirection({ 0, -1,  0});
+    if (ans == t2.y) return transformDirection({ 0,  1,  0});
+    if (ans == t1.z) return transformDirection({ 0,  0, -1});
+    if (ans == t2.z) return transformDirection({ 0,  0,  1});
+
+    return {0, 0, 0};
+}
+
+Position Ellipsoid::getNormal(Ray ray) const {
+    double t = getDistanceT(ray);
+    Position point = move(ray).getPoint(t);
+    return transformDirection({point.x / size.x, point.y / size.y, point.z / size.z});
 }
