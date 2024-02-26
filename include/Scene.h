@@ -71,23 +71,24 @@ struct Camera {
 
 class Scene {
     Color bg_color = {0, 0, 0.1};
-    std::vector<Primitive*> primitives;
+    std::vector<Object*> primitives;
     Camera camera;
 
 public:
 
     Scene() = default;
 
-    Primitive*& last_primitive() {
+    Object*& last_primitive() {
         return primitives.back();
     }
 
-    int get_command(const std::string& command);
+    int getCommand(const std::string& command);
     void load(std::string scene_path);
 
+    Object* intersectObjects(Ray ray);
     Color raytrace(Ray ray);
     std::vector<u_int8_t> render();
-    void render_scene(std::string output_path);
+    void renderScene(std::string output_path);
 };
 
 

@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 
-int Scene::get_command(const std::string& command) {
+int Scene::getCommand(const std::string& command) {
     if (command == "DIMENSIONS") return COMMAND_DIMENSIONS;
     if (command == "BG_COLOR") return COMMAND_BG_COLOR;
     if (command == "CAMERA_POSITION") return COMMAND_CAMERA_POSITION;
@@ -48,7 +48,7 @@ void Scene::load(std::string scene_path) {
         ss << command_line;
         ss >> command_str;
 
-        int command = get_command(command_str);
+        int command = getCommand(command_str);
         switch (command) {
             case COMMAND_DIMENSIONS: {
                 int w, h;
@@ -92,7 +92,7 @@ void Scene::load(std::string scene_path) {
                 break;
             }
             case COMMAND_NEW_PRIMITIVE: {
-                primitives.push_back(new Primitive());
+                primitives.push_back(new Object());
                 break;
             }
             case COMMAND_PLANE:

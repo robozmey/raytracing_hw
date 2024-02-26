@@ -4,19 +4,30 @@
 
 #include "Scene.h"
 
-Color Scene::raytrace(Ray ray) {
-    Color pixel_color = bg_color;
+Object* Scene::intersectObjects(Ray ray) {
     double pixel_t = -1;
+    Object* res = nullptr;
 
-    for (const Primitive* primitive : primitives) {
-        Ray new_ray = primitive->move(ray);
-        double t = primitive->intersection(new_ray);
+    for (Object* object : primitives) {
+        Ray new_ray = object->move(ray);
+        double t = object->intersection(new_ray);
         if (t > 0 && t < pixel_t || t > 0 && pixel_t < 0) {
             pixel_t = t;
-            pixel_color = primitive->get_color();
+            res = object;
         }
     }
-    return pixel_color;
+
+    return res;
+}
+
+Color Scene::raytrace(Ray ray) {
+    Color pixel_color = bg_color;
+
+    Object* nearestIntersection = intersectObjects(ray);
+
+    if (nearestIntersection == nullptr)  return bg_color;
+
+    return nearestIntersection->get_color();
 }
 
 std::vector<u_int8_t> Scene::render() {
@@ -35,7 +46,7 @@ std::vector<u_int8_t> Scene::render() {
     return output;
 }
 
-void Scene::render_scene(std::string output_path) {
+void Scene::renderScene(std::string output_path) {
 
     std::vector<u_int8_t> output_binary = render();
 

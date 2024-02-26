@@ -11,7 +11,7 @@
 #include "Materials.h"
 
 
-class Primitive {
+class Object {
     Position position = {0, 0, 0};
     Rotation rotation = {1, 0, 0, 0};
     Color color = {0, 0, 0};
@@ -19,7 +19,7 @@ class Primitive {
 public:
     Material material = Material();
 
-    Primitive() = default;
+    Object() = default;
 
     Position get_position() const {
         return position;
@@ -51,7 +51,7 @@ public:
     }
 };
 
-class Plane : public Primitive {
+class Plane : public Object {
 public:
     Position normal = {0, 1, 0};
     Plane() = default;
@@ -59,7 +59,7 @@ public:
     double intersection(Ray ray) const override;
 };
 
-class Box : public Primitive {
+class Box : public Object {
 public:
     Position size = {1, 1, 1};
     Box() = default;
@@ -67,7 +67,7 @@ public:
     double intersection(Ray ray) const override;
 };
 
-class Ellipsoid : public Primitive {
+class Ellipsoid : public Object {
 public:
     Position size = {1, 1, 1};
     Ellipsoid() = default;

@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 
     Scene scene;
     scene.load(scene_path);
-    scene.render_scene(output_path);
+    scene.renderScene(output_path);
 
     return 0;
 }
