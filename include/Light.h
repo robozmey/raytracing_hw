@@ -7,6 +7,7 @@
 
 #include "Color.h"
 #include "Position.h"
+#include <glm/glm.hpp>
 
 enum LightType {
     DirectionalLight,
@@ -21,6 +22,17 @@ public:
     Position direction;
 
     LightType type;
+
+    double getCoefficient(Position point) const {
+        if (type == DirectionalLight) return 1.0;
+        double r = glm::distance(position, point);
+        return 1.0 / (attenuation.x + attenuation.y * r + attenuation.z * r * r);
+    }
+
+    Position getDirection(Position point) const {
+        if (type == DirectionalLight) return direction;
+        return - glm::normalize(point - position);
+    }
 };
 
 

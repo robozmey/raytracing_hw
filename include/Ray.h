@@ -23,6 +23,10 @@ public:
         return {origin - d, direction, depth};
     }
 
+    Position getPoint(double t) {
+        return origin + direction * t;
+    }
+
     Ray rotate(Rotation rotation) {
         return {::rotate(origin, rotation), ::rotate(direction, rotation), depth};
     }

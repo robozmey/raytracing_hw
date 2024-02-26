@@ -46,6 +46,15 @@ public:
         return (ray - position).rotate(conjugate(rotation));
     }
 
+    virtual Position getNormal(Ray ray) const {
+        return {0, 0, 1};
+    }
+
+    virtual double getDistanceT(Ray ray) const {
+        Ray new_ray = move(ray);
+        return intersection(new_ray);
+    }
+
     virtual double intersection(Ray ray) const {
         return -1;
     }
@@ -57,6 +66,7 @@ public:
     Plane() = default;
     explicit Plane(Position normal0) : normal(normal0) {}
     double intersection(Ray ray) const override;
+    Position getNormal(Ray ray) const override;
 };
 
 class Box : public Object {

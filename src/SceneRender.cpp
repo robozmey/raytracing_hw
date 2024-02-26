@@ -9,8 +9,7 @@ Object* Scene::intersectObjects(Ray ray) {
     Object* res = nullptr;
 
     for (Object* object : primitives) {
-        Ray new_ray = object->move(ray);
-        double t = object->intersection(new_ray);
+        double t = object->getDistanceT(ray);
         if (t > 0 && t < pixel_t || t > 0 && pixel_t < 0) {
             pixel_t = t;
             res = object;
@@ -21,13 +20,28 @@ Object* Scene::intersectObjects(Ray ray) {
 }
 
 Color Scene::raytrace(Ray ray) {
-    Color pixel_color = bg_color;
+    if (ray.depth == 0) return bg_color;
 
-    Object* nearestIntersection = intersectObjects(ray);
+    Object* nearest = intersectObjects(ray);
+    if (nearest == nullptr) return bg_color;
+    double t = nearest->getDistanceT(ray);
+    Position point = ray.getPoint(t);
 
-    if (nearestIntersection == nullptr)  return bg_color;
+    Color summary_light_color = ambient_color;
 
-    return nearestIntersection->get_color();
+    if (nearest->material.type == DiffuseType) {
+        Position normal = nearest->getNormal(ray);
+        for (Light* light : lights) {
+            Position direction = light->getDirection(point);
+            double d = glm::dot(normal, direction);
+            if (d > 0) {
+                double c = light->getCoefficient(point);
+                summary_light_color += c * d * light->intensity;
+            }
+        }
+    }
+
+    return summary_light_color * nearest->get_color();
 }
 
 std::vector<u_int8_t> Scene::render() {

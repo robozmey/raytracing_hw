@@ -4,6 +4,10 @@
 
 #include "Color.h"
 
+Color operator*(double d, Color other) {
+    return {d * other.r, d * other.g, d * other.b};
+}
+
 u_int8_t b2f(double c) {
     return round(c * 255);
 }

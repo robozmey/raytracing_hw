@@ -38,3 +38,9 @@ double Ellipsoid::intersection(Ray ray) const  {
     else
     return t2;
 }
+
+// Normals
+
+Position Plane::getNormal(Ray ray) const {
+    return normal;
+}
