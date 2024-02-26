@@ -8,6 +8,7 @@
 #include "Position.h"
 #include "Ray.h"
 #include "Color.h"
+#include "Materials.h"
 
 
 class Primitive {
@@ -16,6 +17,8 @@ class Primitive {
     Color color = {0, 0, 0};
 
 public:
+    Material material = Material();
+
     Primitive() = default;
 
     Position get_position() const {

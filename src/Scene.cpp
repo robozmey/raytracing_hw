@@ -135,6 +135,19 @@ void Scene::load(std::string scene_path) {
                 last_primitive()->set_color({r, g, b});
                 break;
             }
+// Materials
+            case COMMAND_METALLIC:
+                last_primitive()->material.type = MetallicType;
+                break;
+            case COMMAND_DIELECTRIC:
+                last_primitive()->material.type = DielectricType;
+                break;
+            case COMMAND_IOR: {
+                double ior;
+                ss >> ior;
+                last_primitive()->material.ior = ior;
+                break;
+            }
             default: {
                 std::cerr << "Found unknown command: " << command_str << std::endl;
                 break;

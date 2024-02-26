@@ -14,7 +14,8 @@ add_executable(raytracing_hw
         src/Primitives.cpp
         src/Color.cpp
         src/Scene.cpp
-        src/SceneRender.cpp)
+        src/SceneRender.cpp
+        src/Materials.cpp)
 
 add_subdirectory(glm)
 target_link_libraries(${TARGET_NAME} glm::glm)
