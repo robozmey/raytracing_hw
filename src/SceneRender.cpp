@@ -4,12 +4,15 @@
 
 #include "Scene.h"
 
+#define EPS 0.0000001
+
 Object* Scene::intersectObjects(Ray ray) {
     double pixel_t = -1;
     Object* res = nullptr;
 
     for (Object* object : primitives) {
         double t = object->getDistanceT(ray);
+        if (t < EPS) t = -1;
         if (t > 0 && t < pixel_t || t > 0 && pixel_t < 0) {
             pixel_t = t;
             res = object;
@@ -39,6 +42,11 @@ Color Scene::raytrace(Ray ray) {
                 summary_light_color += c * d * light->intensity;
             }
         }
+    }
+    if (nearest->material.type == MetallicType) {
+        Position normal = nearest->getNormal(ray);
+        Position new_direction = ray.direction - 2.0 * normal * (normal * ray.direction);
+        summary_light_color = raytrace({point, new_direction, ray.depth-1});
     }
 
     return summary_light_color * nearest->get_color();
