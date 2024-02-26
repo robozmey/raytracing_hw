@@ -57,6 +57,16 @@ struct Camera {
 #define COMMAND_POSITION        11
 #define COMMAND_ROTATION        12
 #define COMMAND_COLOR           13
+#define COMMAND_RAY_DEPTH       14
+#define COMMAND_AMBIENT_LIGHT   15
+#define COMMAND_NEW_LIGHT       16
+#define COMMAND_LIGHT_INTENSITY 17
+#define COMMAND_LIGHT_DIRECTION 18
+#define COMMAND_LIGHT_POSITION  18
+#define COMMAND_LIGHT_ATTENUATION 19
+#define COMMAND_METALLIC        20
+#define COMMAND_DIELECTRIC      21
+#define COMMAND_IOR             22
 
 
 class Scene {

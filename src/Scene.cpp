@@ -20,6 +20,19 @@ int Scene::get_command(const std::string& command) {
     if (command == "ROTATION") return COMMAND_ROTATION;
     if (command == "COLOR") return COMMAND_COLOR;
 
+    if (command == "RAY_DEPTH") return COMMAND_RAY_DEPTH;
+    if (command == "AMBIENT_LIGHT") return COMMAND_AMBIENT_LIGHT;
+    if (command == "NEW_LIGHT") return COMMAND_NEW_LIGHT;
+    if (command == "LIGHT_INTENSITY") return COMMAND_LIGHT_INTENSITY;
+    if (command == "LIGHT_DIRECTION") return COMMAND_LIGHT_DIRECTION;
+    if (command == "LIGHT_POSITION") return COMMAND_LIGHT_POSITION;
+    if (command == "LIGHT_ATTENUATION") return COMMAND_LIGHT_ATTENUATION;
+
+    if (command == "METALLIC") return COMMAND_METALLIC;
+    if (command == "DIELECTRIC") return COMMAND_DIELECTRIC;
+    if (command == "IOR") return COMMAND_IOR;
+
+
     return -1;
 }
 
