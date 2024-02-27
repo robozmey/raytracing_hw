@@ -72,5 +72,6 @@ Position Box::getNormal(Ray ray) const {
 Position Ellipsoid::getNormal(Ray ray) const {
     double t = getDistanceT(ray);
     Position point = move(ray).getPoint(t);
-    return transformDirection({point.x / size.x, point.y / size.y, point.z / size.z});
+    Position grad = point / size;
+    return transformDirection(glm::normalize(grad));
 }

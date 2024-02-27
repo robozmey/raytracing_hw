@@ -65,18 +65,21 @@ Color Scene::raytrace(Ray ray) {
     if (nearest->material.type == DielectricType) {
         Position normal = nearest->getNormal(ray);
 
-        double n1 = 1, n2 = nearest->material.ior;
-        if (ray.is_inside_ray) n1 = nearest->material.ior, n2 = 1;
         Position reflected_direction = getReflection(normal, ray.direction);
+
+        double n1 = 1, n2 = nearest->material.ior;
+        bool is_inside_ray = glm::dot(normal, ray.direction) > 0;
+        if (is_inside_ray) n1 = nearest->material.ior, n2 = 1;
 
         Position l = -ray.direction;
         double cos1 = glm::dot(normal, l);
         double sin2 = n1 / n2 * sqrt(1 - cos1 * cos1);
         double cos2 = sqrt(1 - sin2 * sin2);
         Position refracted_direction = n1 / n2 * (-l) + (n1 / n2 * cos1 - cos2) * normal;
+//        refracted_direction = ray.direction + (sqrt((n1 * n1 + n2 * n2) / (cos1 * cos1) + 1) - 1);
 
-        Color reflected_light_color = raytrace({point, reflected_direction, ray.depth-1, ray.is_inside_ray});
-        Color refracted_light_color = raytrace({point, refracted_direction, ray.depth-1, !ray.is_inside_ray});
+        Color reflected_light_color = raytrace({point, reflected_direction, ray.depth-1});
+        Color refracted_light_color = raytrace({point, refracted_direction, ray.depth-1});
 
         double r0 = pow((n1 - n2) / (n1 + n2), 2.0);
         double r  = r0 + (1 - r0) * pow(1 - glm::dot(normal, -ray.direction), 5);
