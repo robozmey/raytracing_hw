@@ -7,11 +7,13 @@
 int Scene::getCommand(const std::string& command) {
     if (command == "DIMENSIONS") return COMMAND_DIMENSIONS;
     if (command == "BG_COLOR") return COMMAND_BG_COLOR;
+
     if (command == "CAMERA_POSITION") return COMMAND_CAMERA_POSITION;
     if (command == "CAMERA_RIGHT") return COMMAND_CAMERA_RIGHT;
     if (command == "CAMERA_UP") return COMMAND_CAMERA_UP;
     if (command == "CAMERA_FORWARD") return COMMAND_CAMERA_FORWARD;
     if (command == "CAMERA_FOV_X") return COMMAND_CAMERA_FOV_X;
+
     if (command == "NEW_PRIMITIVE") return COMMAND_NEW_PRIMITIVE;
     if (command == "PLANE") return COMMAND_PLANE;
     if (command == "ELLIPSOID") return COMMAND_ELLIPSOID;
@@ -32,7 +34,6 @@ int Scene::getCommand(const std::string& command) {
     if (command == "DIELECTRIC") return COMMAND_DIELECTRIC;
     if (command == "IOR") return COMMAND_IOR;
 
-
     return -1;
 }
 
@@ -50,6 +51,7 @@ void Scene::load(std::string scene_path) {
 
         int command = getCommand(command_str);
         switch (command) {
+// Scene
             case COMMAND_DIMENSIONS: {
                 int w, h;
                 ss >> w >> h;
@@ -69,6 +71,7 @@ void Scene::load(std::string scene_path) {
                 bg_color.set(r, g, b);
                 break;
             }
+// Camera
             case COMMAND_CAMERA_FOV_X: {
                 double fov_x;
                 ss >> fov_x;

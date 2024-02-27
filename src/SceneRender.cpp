@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 
-#define EPS 0.0000001
+#define EPS 0.001
 
 Object* Scene::intersectObjects(Ray ray) {
     double pixel_t = -1;
@@ -43,11 +43,11 @@ Color Scene::raytrace(Ray ray) {
 
             Position point2 = ray.getPoint(nearest->getDistanceT(ray));
             Object* nearest2 = intersectObjects({point2, direction, 0});
-            double neares2_distance = -1, light_distance = -1;
-            if (nearest2 != nullptr) neares2_distance = glm::distance(nearest2->get_position(), point);
+            double nearest2_distance = -1, light_distance = -1;
+            if (nearest2 != nullptr) nearest2_distance = glm::distance(nearest2->get_position(), point);
             if (light->type == PositionalLight) light_distance = glm::distance(light->position, point);
 
-            if (light_distance < neares2_distance) continue;
+            if (light_distance > nearest2_distance && nearest2_distance != -1 || light_distance == -1 && nearest2_distance != -1) continue;
 
             double d = glm::dot(normal, direction);
             if (d > 0) {
@@ -69,7 +69,7 @@ Color Scene::raytrace(Ray ray) {
 
         double n1 = 1, n2 = nearest->material.ior;
         bool is_inside_ray = glm::dot(normal, ray.direction) > 0;
-        if (is_inside_ray) n1 = nearest->material.ior, n2 = 1;
+//        if (is_inside_ray) n1 = nearest->material.ior, n2 = 1;
 
         Position l = -ray.direction;
         double cos1 = glm::dot(normal, l);
